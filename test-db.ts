@@ -9,10 +9,10 @@ console.log("Connecting to DB with credentials:", {
 });
 
 const res = await pool.query('SELECT NOW()');
-console.log('✅ DB connected:', res.rows[0]);
+console.log('DB connected:', res.rows[0]);
 process.exit(0);
 } catch (err) {
-console.error('❌ DB error:', err);
+console.error('DB error:', err);
 process.exit(1);
 }
 })();

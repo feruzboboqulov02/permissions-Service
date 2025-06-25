@@ -1,6 +1,6 @@
 import { getCachedPermissions, setCachedPermissions } from '../services/cache.js';
 import { query } from '../services/db.js';
-import { Permission, ErrorCode } from '../lib/types.js';
+import { ErrorCode } from '../lib/types.js';
 import { logEvent, logError } from '../lib/logger.js';
 
 interface CheckRequest {
