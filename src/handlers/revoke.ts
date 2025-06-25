@@ -1,0 +1,1 @@
+export const handleRevoke = async (msg: any, reply: (data: any) => void) => {};

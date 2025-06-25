@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: pg-permissions
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: permissions
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  nats:
+    image: nats:latest
+    container_name: nats-permissions
+    restart: unless-stopped
+    ports:
+      - "4222:4222"    # NATS messaging
+      - "8222:8222"    # Monitoring (NATS Web UI)
+    command: -js       # включаем JetStream для KV
+
+volumes:
+  pgdata:

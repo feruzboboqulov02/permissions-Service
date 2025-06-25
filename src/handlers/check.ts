@@ -1,0 +1,1 @@
+export const handleCheck = async (msg: any, reply: (data: any) => void) => {};
