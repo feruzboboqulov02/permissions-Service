@@ -18,7 +18,7 @@ const handleGrant = async (msg) => {
     }
     catch (err) {
         (0, logger_1.log)('grant:error', { message: err.message });
-        msg.respond(Buffer.from(JSON.stringify({ error: { code: 'db_error', message: err.message } })));
+        msg.respond(Buffer.from(JSON.stringify({ error: { code: 'grant_error', message: err.message } })));
     }
 };
 exports.handleGrant = handleGrant;

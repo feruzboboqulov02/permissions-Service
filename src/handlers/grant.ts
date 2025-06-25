@@ -21,9 +21,10 @@ log('grant:updated_cache', { apiKey, permissionCount: permissions.length });
 const response: SuccessResponse = { status: 'ok' };
 msg.respond(Buffer.from(JSON.stringify(response)));
 } catch (err: any) {
-log('grant:error', { message: err.message });
-msg.respond(
-Buffer.from(JSON.stringify({ error: { code: 'db_error', message: err.message } }))
-);
-}
-};
+  log('grant:error', { message: err.message });
+  msg.respond(
+    Buffer.from(
+      JSON.stringify({ error: { code: 'grant_error', message: err.message } })
+    )
+  );
+}}

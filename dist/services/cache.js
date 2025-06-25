@@ -13,10 +13,14 @@ async function initKVConnection(natsUrl) {
     kv = await js.views.kv('permissions_cache');
 }
 async function setCachedPermissions(apiKey, permissions) {
+    if (!kv)
+        throw new Error('KV not initialized. Call initKVConnection() first.');
     const json = JSON.stringify(permissions);
     await kv.put(apiKey, sc.encode(json));
 }
 async function getCachedPermissions(apiKey) {
+    if (!kv)
+        throw new Error('KV not initialized. Call initKVConnection() first.');
     try {
         const entry = await kv.get(apiKey);
         if (!entry)

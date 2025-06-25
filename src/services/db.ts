@@ -11,9 +11,20 @@ export const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
+
+export async function query(text: string, params?: any[]) {
+  return pool.query(text, params);
+}
 export async function insertPermission(apiKey: string, module: string, action: string): Promise<void> {
   await pool.query(
     `INSERT INTO permissions (api_key, module, action) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`,
+    [apiKey, module, action]
+  );
+}
+
+export async function deletePermission(apiKey: string, module: string, action: string): Promise<void> {
+  await pool.query(
+    `DELETE FROM permissions WHERE api_key = $1 AND module = $2 AND action = $3`,
     [apiKey, module, action]
   );
 }

@@ -12,12 +12,15 @@ kv = await js.views.kv('permissions_cache');
 }
 
 export async function setCachedPermissions(apiKey: string, permissions: Permission[]): Promise<void> {
+    if (!kv) throw new Error('KV not initialized. Call initKVConnection() first.');
 const json = JSON.stringify(permissions);
 await kv.put(apiKey, sc.encode(json));
 }
 
 export async function getCachedPermissions(apiKey: string): Promise<Permission[] | null> {
-try {
+  if (!kv) throw new Error('KV not initialized. Call initKVConnection() first.');
+
+    try {
 const entry = await kv.get(apiKey);
 if (!entry) return null;
 return JSON.parse(sc.decode(entry.value));

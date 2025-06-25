@@ -19,6 +19,8 @@ module: string;
 action: string;
 };
 
+export type ErrorCode = 'db_error' | 'not_found' | 'invalid_request' | 'unknown';
+
 export type SuccessResponse = { status: 'ok' };
 
 export type CheckResponse = { allowed: boolean };
