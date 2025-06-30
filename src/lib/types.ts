@@ -7,7 +7,19 @@ export const SUBJECTS = {
 };
 
 
-// ...existing code...
+export type ModuleActions = {
+    TRADES: 'create' | 'create-manual';
+    INVENTORY: 'create' | 'update' | 'delete' | 'read';
+    USERS: 'create' | 'read' | 'update' | 'delete' | 'block';
+    REPORTS: 'generate' | 'view' | 'export';
+    SETTINGS: 'read' | 'update';
+    PAYMENTS: 'initiate' | 'confirm' | 'cancel' | 'refund';
+}
+
+export type Module = keyof ModuleActions;
+export type Action<M extends Module> = ModuleActions[M];
+
+
 
 export type ErrorResponse = {
   error: {
@@ -16,7 +28,7 @@ export type ErrorResponse = {
   };
 };
 
-// Optional: type guard for ErrorResponse
+
 export function isErrorResponse(obj: any): obj is ErrorResponse {
   return (
     typeof obj === 'object' &&
@@ -27,48 +39,48 @@ export function isErrorResponse(obj: any): obj is ErrorResponse {
   );
 }
 
-export type GrantRequest = {
+export type GrantRequest<M extends Module = Module> = {
   apiKey: string;
-  module: string;
-  action: string;
+  module: M;
+  action: Action<M>;
 };
 
 export type GrantResponse = {
   status: 'ok';
 };
 
-export type RevokeRequest = {
+export type RevokeRequest<M extends Module = Module> = {
   apiKey: string;
-  module: string;
-  action: string;
+  module: M;
+  action: Action<M>;
 };
 
 export type RevokeResponse = {
   status: 'ok';
 };
 
-// ...other types...
 
 
-export type GrantRevokeRequest = {
+
+export type GrantRevokeRequest<M extends Module = Module> = {
 apiKey: string;
-module: string;
-action: string;
+module: M;
+action: Action<M>;
 };
 
-export type CheckRequest = {
+export type CheckRequest<M extends Module = Module> = {
 apiKey: string;
-module: string;
-action: string;
+module: M;
+action: Action<M>;
 };
 
 export type ListRequest = {
 apiKey: string;
 };
 
-export type Permission = {
-module: string;
-action: string;
+export type Permission<M extends Module = Module> = {
+module: M;
+action: Action<M>;
 };
 
 export type ErrorCode = 'db_error' | 'not_found' | 'invalid_request' | 'unknown';
@@ -77,7 +89,7 @@ export type SuccessResponse = { status: 'ok' };
 
 export type CheckResponse = { allowed: boolean };
 
-export type ListResponse = { permissions: Permission[] };
+export type ListResponse<M extends Module = Module> = { permissions: Permission<M>[] };
 
 
 
