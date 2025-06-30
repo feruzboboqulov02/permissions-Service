@@ -5,7 +5,7 @@ const db_1 = require("../services/db");
 const cache_1 = require("../services/cache");
 const logger_1 = require("../utils/logger");
 const handleRevoke = async (msg) => {
-    console.log('🔁 Revoke handler triggered');
+    console.log('Revoke handler triggered');
     try {
         const { apiKey, module, action } = JSON.parse(msg.data.toString());
         (0, logger_1.log)('revoke:received', { apiKey, module, action });
