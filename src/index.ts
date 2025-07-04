@@ -30,12 +30,7 @@ const start = async () => {
 
  nc.subscribe(SUBJECTS.CHECK, {
   callback: async (err, msg) => {
-    if (msg) {
-      const req = JSON.parse(msg.data.toString());
-      await handleCheck(req, (res) => {
-        msg.respond(Buffer.from(JSON.stringify(res)));
-      });
-    }
+    if (msg) await handleCheck(msg);
   }
 });
 

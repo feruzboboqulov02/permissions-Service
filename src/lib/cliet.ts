@@ -15,17 +15,11 @@ import {
 
 const jsonCodec = JSONCodec();
 
-/**
- * Client for the permissions service
- */
+
 export class PermissionsClient {
   constructor(private nats: NatsConnection) {}
 
-  /**
-   * Grant a permission to an API key
-   * @param request The grant request
-   * @returns Promise resolving to the grant response or error
-   */
+  
   async grant(request: GrantRequest): Promise<GrantResponse | ErrorResponse> {
     try {
       const response = await this.nats.request(
@@ -44,11 +38,6 @@ export class PermissionsClient {
     }
   }
 
-  /**
-   * Revoke a permission from an API key
-   * @param request The revoke request
-   * @returns Promise resolving to the revoke response or error
-   */
   async revoke(request: RevokeRequest): Promise<RevokeResponse | ErrorResponse> {
     try {
       const response = await this.nats.request(
@@ -67,11 +56,7 @@ export class PermissionsClient {
     }
   }
 
-  /**
-   * Check if an API key has a permission
-   * @param request The check request
-   * @returns Promise resolving to the check response or error
-   */
+  
   async check(request: CheckRequest): Promise<CheckResponse | ErrorResponse> {
     try {
       const response = await this.nats.request(
@@ -90,11 +75,7 @@ export class PermissionsClient {
     }
   }
 
-  /**
-   * List all permissions for an API key
-   * @param request The list request
-   * @returns Promise resolving to the list response or error
-   */
+  
   async list(request: ListRequest): Promise<ListResponse | ErrorResponse> {
     try {
       const response = await this.nats.request(

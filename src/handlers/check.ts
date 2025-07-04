@@ -1,46 +1,51 @@
-import { getCachedPermissions, setCachedPermissions } from '../services/cache.js';
-import { query } from '../services/db.js';
-import { ErrorCode } from '../lib/types.js';
-import { logEvent, logError } from '../lib/logger.js';
+import { Msg } from 'nats';
+import { CheckRequest, CheckResponse } from '../lib/types';
+import { getCachedPermissions } from '../services/cache';
 
-interface CheckRequest {
-  apiKey: string;
-  module: string;
-  action: string;
+
+const permissionMap = new Map<string, Set<string>>();
+
+// Helper to form key
+function makeKey(module: string, action: string): string {
+  return `${module}:${action}`;
 }
 
-interface CheckResponse {
-  allowed: boolean;
+
+async function ensurePermissionsLoaded(apiKey: string) {
+  if (permissionMap.has(apiKey)) return;
+
+  const permissions = await getCachedPermissions(apiKey);
+  if (!permissions) {
+    permissionMap.set(apiKey, new Set()); 
+    return;
+  }
+
+  const keySet = new Set<string>();
+  for (const p of permissions) {
+    keySet.add(makeKey(p.module, p.action));
+  }
+
+  permissionMap.set(apiKey, keySet);
 }
 
-export async function handleCheck(req: CheckRequest, respond: (res: CheckResponse | { error: { code: ErrorCode; message: string } }) => void) {
+export async function handleCheck(msg: Msg) {
   try {
-    logEvent('check:received', req);
+    const req = JSON.parse(msg.data.toString()) as CheckRequest;
 
-    const { apiKey, module, action } = req;
+    await ensurePermissionsLoaded(req.apiKey);
 
-    // 1. Try to get from KV
-    let permissions = await getCachedPermissions(apiKey);
+    const allowedSet = permissionMap.get(req.apiKey) ?? new Set();
+    const isAllowed = allowedSet.has(makeKey(req.module, req.action));
 
-    // 2. If not in KV, get from DB and update KV
-    if (!permissions) {
-      const result = await query('SELECT module, action FROM permissions WHERE api_key = $1', [apiKey]);
-      permissions = result.rows;
-      await setCachedPermissions(apiKey, permissions);
-      logEvent('check:cacheUpdated', { apiKey });
-    }
-
-    // 3. Check if permission exists
-    const allowed = permissions.some((p) => p.module === module && p.action === action);
-
-    respond({ allowed });
-  } catch (err: any) {
-    logError('check:error', err);
-    respond({
-      error: {
-        code: 'db_error',
-        message: err.message || 'Internal error'
-      }
-    });
+    const res: CheckResponse = { allowed: isAllowed };
+    msg.respond(Buffer.from(JSON.stringify(res)));
+  } catch (e) {
+    msg.respond(
+      Buffer.from(
+        JSON.stringify({
+          error: { code: 'invalid_request', message: 'Invalid check request' }
+        })
+      )
+    );
   }
 }
